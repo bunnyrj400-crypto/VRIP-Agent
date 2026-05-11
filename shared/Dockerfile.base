@@ -14,12 +14,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy shared library first to leverage Docker cache
+# Install Common VRIP Dependencies (Consolidated here)
+RUN pip install --no-cache-dir \
+    fastapi==0.109.0 \
+    uvicorn==0.27.0 \
+    pydantic==2.5.3 \
+    pydantic-settings==2.1.0 \
+    httpx==0.26.0 \
+    python-dotenv==1.0.0
+
+# Copy and install shared library
 COPY shared/ /app/shared/
 RUN pip install --no-cache-dir ./shared
-
-# Service-specific setup will be handled in inheriting Dockerfiles
-# Example:
-# COPY services/my-service/requirements.txt .
-# RUN pip install -r requirements.txt
-# COPY services/my-service/ /app/services/my-service/

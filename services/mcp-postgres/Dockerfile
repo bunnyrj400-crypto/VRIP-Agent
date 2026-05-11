@@ -1,0 +1,14 @@
+FROM vrip-shared-base:latest
+
+WORKDIR /app
+
+COPY services/mcp-postgres/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY services/mcp-postgres/ /app/services/mcp-postgres/
+
+ENV PYTHONPATH=/app
+
+EXPOSE 8001
+
+CMD ["uvicorn", "services.mcp-postgres.main:app", "--host", "0.0.0.0", "--port", "8001"]

@@ -79,3 +79,40 @@ graph TD
 *   **Ontology-First**: All data is structured according to the formal [Ontology](docs/ontology.md).
 *   **Tool Decoupling**: Agents are agnostic of where data is stored; they only interact with the MCP layer.
 *   **Observability**: Structured logs are emitted at every step, allowing for full tracing of an agent's "thought process."
+## 5. MCP Layer Architecture: The Tool Interface
+
+The Model Context Protocol (MCP) acts as the bridge between the high-level reasoning of the AI agents and the low-level execution of infrastructure tools.
+
+### Why this design?
+1.  **Security**: Agents never see database credentials. They only see "Tools" with strict input schemas.
+2.  **Scalability**: New capabilities (e.g., a "Cyber Incident API") can be added as a new MCP server without touching the agent logic.
+3.  **Observability**: Every tool call is logged at the MCP Gateway, providing a full audit trail of what the AI "did" to the system.
+
+### Interaction Flow: "Gather News Evidence"
+
+```mermaid
+sequenceDiagram
+    participant Agent as ResearchAgent
+    participant GW as MCP Gateway
+    participant Web as MCP Web Server
+    participant Google as Search Engine API
+
+    Agent->>GW: POST /execute {server: "web", tool: "search_web", args: {query: "Vendor X breach"}}
+    GW->>GW: Validate Tool & Permissions
+    GW->>Web: POST /execute/search_web {query: "Vendor X breach"}
+    Web->>Google: API Request (Gather Raw News)
+    Google-->>Web: Raw Results
+    Web->>Web: Sanitize & Clean Content
+    Web-->>GW: {status: "success", results: [...]}
+    GW-->>Agent: Evidence Packet
+```
+
+### Registered MCP Servers & Toolsets
+
+| Server | Core Tools | Primary Responsibility |
+| :--- | :--- | :--- |
+| **mcp-postgres** | `query_vendor`, `audit_log` | Transactional data & history. |
+| **mcp-qdrant** | `search_vendor_docs` | Semantic memory & similarity. |
+| **mcp-web** | `search_web`, `get_content` | Real-time OSINT intelligence. |
+| **mcp-files** | `parse_pdf`, `extract_entity` | Document understanding. |
+| **mcp-risk-engine** | `calculate_risk_score` | Deterministic business logic. |

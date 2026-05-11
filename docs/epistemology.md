@@ -38,3 +38,12 @@ Agents must adhere to the following constraints:
 *   **Cyber Incidents**: Half-life of 6 months.
 *   **Compliance Status**: Invalidated after 1 year.
 *   **Financial Health**: Quarterly updates expected.
+
+### 💡 Small Real-World Example
+
+**Scenario**: A news site reports a breach at Vendor X (Tier 4), but the vendor’s official SOC2 report (Tier 1) from last month shows perfect security scores.
+
+1.  **Conflict**: The system sees a "Claim" of a breach vs a "Claim" of security.
+2.  **Weighting**: The SOC2 report has a Weight of 1.0, while the News has a Weight of 0.6.
+3.  **Resolution**: The system calculates a moderate risk score but flags it as **"High Uncertainty"** because the news is more "Fresh" (Newer) than the audit.
+4.  **Action**: It doesn't ignore the news; it triggers the `ResearchAgent` to find a second Tier 4 source to verify the breach before updating the final score.

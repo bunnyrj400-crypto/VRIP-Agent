@@ -107,6 +107,19 @@ sequenceDiagram
     GW-->>Agent: Evidence Packet
 ```
 
+### 💡 Small Real-World Example
+
+**Scenario**: You ask the system: *“Did Vendor X have a security breach?”*
+
+1.  **Agent Request**: `ResearchAgent` receives your question and realizes it needs external info.
+2.  **Governance**: `MCP Gateway` checks if the agent is authorized to use the "web" tools.
+3.  **Discovery**: `MCP Web Server` is contacted to perform the search.
+4.  **Collection**: The `Search API` gathers relevant news articles.
+5.  **Refinement**: The server cleans and filters the results (removing ads/noise).
+6.  **Delivery**: Final verified evidence is returned to the agent.
+
+**Result**: The AI agent stays "inside" the secure OS environment while safely utilizing external tools without directly accessing the internet itself.
+
 ### Registered MCP Servers & Toolsets
 
 | Server | Core Tools | Primary Responsibility |

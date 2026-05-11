@@ -1,0 +1,25 @@
+# Base Dockerfile for VRIP Python Services
+FROM python:3.11-slim
+
+# Prevent Python from writing .pyc files and enable unbuffered logging
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy shared library first to leverage Docker cache
+COPY shared/ /app/shared/
+RUN pip install --no-cache-dir ./shared
+
+# Service-specific setup will be handled in inheriting Dockerfiles
+# Example:
+# COPY services/my-service/requirements.txt .
+# RUN pip install -r requirements.txt
+# COPY services/my-service/ /app/services/my-service/

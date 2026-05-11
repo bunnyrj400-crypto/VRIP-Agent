@@ -129,3 +129,21 @@ sequenceDiagram
 | **mcp-web** | `search_web`, `get_content` | Real-time OSINT intelligence. |
 | **mcp-files** | `parse_pdf`, `extract_entity` | Document understanding. |
 | **mcp-risk-engine** | `calculate_risk_score` | Deterministic business logic. |
+
+## 6. Data Orchestration Layer (Airflow)
+
+Airflow acts as the **Circulatory System** of the VRIP platform, managing long-running, scheduled, and background data tasks.
+
+### Why Airflow?
+1.  **Continuous Intelligence**: Risk is "Always-On." Airflow ensures the platform is proactively gathering data even when no user is logged in.
+2.  **Batch Processing (ETL)**: Parsing large PDF sets or generating embeddings is computationally expensive. Airflow handles these "Heavy Lifting" tasks outside the agent's real-time reasoning loop.
+3.  **Data Integrity (Entropy Management)**: Automates the "Janitor Jobs" that mark old evidence as stale based on the [Entropy Model](docs/entropy_model.md).
+
+### 💡 Small Real-World Example
+
+**Scenario**: Monitoring 500+ vendors simultaneously.
+
+*   **9:00 AM**: Airflow triggers `Ingestion_DAG`. It pulls 1,000 news headlines across all vendors.
+*   **9:15 AM**: Airflow triggers `Embedding_DAG`. It transforms headlines into vectors and updates **Qdrant**.
+*   **9:30 AM**: A user asks: *"Any critical updates?"*
+*   **Result**: The Agent instantly identifies a breach reported 30 minutes ago because the data was pre-processed by Airflow.

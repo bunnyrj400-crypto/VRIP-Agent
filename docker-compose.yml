@@ -1,116 +1,79 @@
 version: '3.8'
 
 services:
-  # --- Persistent Storage ---
+  # Infrastructure
   postgres:
-    image: postgres:15-alpine
-    container_name: vrip-postgres
-    restart: always
+    image: postgres:16
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-vrip_admin}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vrip_password}
-      POSTGRES_DB: ${POSTGRES_DB:-vrip_db}
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: vrip
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U vrip_admin"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   qdrant:
-    image: qdrant/qdrant:latest
-    container_name: vrip-qdrant
-    restart: always
+    image: qdrant/qdrant
     ports:
       - "6333:6333"
-      - "6334:6334"
     volumes:
       - qdrant_data:/qdrant/storage
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:6333/healthz"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   redis:
     image: redis:7-alpine
-    container_name: vrip-redis
-    restart: always
     ports:
       - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
-  # --- Infrastructure Layer (MCP) ---
+  # MCP Layer
   mcp-gateway:
     build:
       context: .
       dockerfile: services/mcp-gateway/Dockerfile
-    container_name: vrip-mcp-gateway
-    environment:
-      - POSTGRES_HOST=postgres
-      - QDRANT_HOST=qdrant
-      - REDIS_HOST=redis
-    depends_on:
-      postgres:
-        condition: service_healthy
-      qdrant:
-        condition: service_healthy
     ports:
-      - "${MCP_GATEWAY_PORT:-8000}:8000"
+      - "8000:8000"
+    env_file: .env
+    depends_on:
+      - mcp-postgres
+      - mcp-qdrant
 
-  # --- Intelligence Layer (Agents) ---
+  mcp-postgres:
+    build:
+      context: .
+      dockerfile: services/mcp-postgres/Dockerfile
+    env_file: .env
+    depends_on:
+      - postgres
+
+  mcp-qdrant:
+    build:
+      context: .
+      dockerfile: services/mcp-qdrant/Dockerfile
+    env_file: .env
+    depends_on:
+      - qdrant
+
+  # Intelligence Layer
   agent-service:
     build:
       context: .
       dockerfile: services/agent-service/Dockerfile
-    container_name: vrip-agent-service
-    environment:
-      - GROQ_API_KEY=${GROQ_API_KEY}
-      - MCP_GATEWAY_URL=http://mcp-gateway:8000
-    depends_on:
-      - mcp-gateway
+    env_file: .env
     ports:
       - "8001:8001"
+    depends_on:
+      - mcp-gateway
 
-  # --- API Layer ---
+  # Public API
   api-gateway:
     build:
       context: .
       dockerfile: services/api-gateway/Dockerfile
-    container_name: vrip-api-gateway
-    environment:
-      - POSTGRES_HOST=postgres
-      - AGENT_SERVICE_URL=http://agent-service:8001
+    ports:
+      - "8080:8080"
+    env_file: .env
     depends_on:
-      - postgres
       - agent-service
-    ports:
-      - "${API_PORT:-8080}:8080"
-
-  # --- Data Engineering (Airflow) ---
-  # Note: Airflow setup is usually more complex, using placeholders for now
-  airflow:
-    image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.9.1}
-    container_name: vrip-airflow
-    environment:
-      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://vrip_admin:vrip_password@postgres/vrip_db
-      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
-    volumes:
-      - ./airflow/dags:/opt/airflow/dags
-      - ./airflow/logs:/opt/airflow/logs
-      - ./airflow/plugins:/opt/airflow/plugins
-    depends_on:
-      postgres:
-        condition: service_healthy
-    ports:
-      - "8081:8080"
 
 volumes:
   postgres_data:

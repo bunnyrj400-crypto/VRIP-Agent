@@ -25,7 +25,7 @@ class Settings(BaseSettings):
 
     # AI & LLM
     GROQ_API_KEY: str = Field(..., description="API Key for Groq Cloud")
-    DEFAULT_LLM_MODEL: str = "llama-3.1-70b-versatile"
+    DEFAULT_LLM_MODEL: str = "llama-3.3-70b-versatile"
     EMBEDDING_MODEL: str = "nomic-embed-text"
 
     # MCP

@@ -4,110 +4,13 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VRIP OS | Vendor Risk Operating System</title>
-    <style>
-      :root {
-        --bg-color: #0f172a;
-        --accent-color: #38bdf8;
-        --card-bg: #1e293b;
-      }
-      body {
-        background-color: var(--bg-color);
-        color: white;
-        font-family: 'Inter', system-ui, sans-serif;
-        margin: 0;
-        padding: 0;
-      }
-      .dashboard {
-        padding: 2rem;
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-      header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 3rem;
-      }
-      .logo {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: var(--accent-color);
-      }
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem;
-      }
-      .card {
-        background: var(--card-bg);
-        padding: 1.5rem;
-        border-radius: 12px;
-        border: 1px solid #334155;
-      }
-      .risk-score {
-        font-size: 3rem;
-        font-weight: bold;
-        color: #ef4444;
-      }
-      .agent-status {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.875rem;
-        color: #94a3b8;
-      }
-      .status-pulse {
-        width: 8px;
-        height: 8px;
-        background: #22c55e;
-        border-radius: 50%;
-        box-shadow: 0 0 0 0 rgba(34, 197, 94, 1);
-        animation: pulse 2s infinite;
-      }
-      @keyframes pulse {
-        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-        70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
-        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
-      }
-    </style>
+    <title>VRIP | AI Vendor Risk Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
   </head>
-  <body>
-    <div id="root">
-      <div class="dashboard">
-        <header>
-          <div class="logo">VRIP_OS//AGENT_DASHBOARD</div>
-          <div class="agent-status">
-            <div class="status-pulse"></div>
-            <span>AI AGENTS ONLINE (GROQ_L3.1_70B)</span>
-          </div>
-        </header>
-
-        <main class="grid">
-          <div class="card">
-            <h3>Active Vendor: CyberStream Inc.</h3>
-            <div class="risk-score">78</div>
-            <p>Risk Level: <span style="color: #fb923c;">High Uncertainty</span></p>
-            <p>Reasoning: Detected Tier 4 news breach. SOC2 validation pending.</p>
-          </div>
-
-          <div class="card">
-            <h3>Intelligence Flow</h3>
-            <p><b>Planner</b>: Step 3 of 4 (Reviewing Audit)</p>
-            <p><b>Research</b>: Found 12 documents in Qdrant</p>
-            <p><b>Critic</b>: Verification in progress...</p>
-          </div>
-          
-          <div class="card">
-            <h3>System Audit Logs</h3>
-            <ul style="font-size: 0.8rem; list-style: none; padding: 0;">
-              <li>[10:45:01] Agent:Research - Queried MCP-Web</li>
-              <li>[10:44:22] Agent:Planner - Initialized Analysis</li>
-              <li>[10:43:00] User:Admin - Registered Vendor</li>
-            </ul>
-          </div>
-        </main>
-      </div>
-    </div>
+  <body style="background: #0a0a0c; margin: 0; color: #fff; font-family: 'Inter', sans-serif;">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

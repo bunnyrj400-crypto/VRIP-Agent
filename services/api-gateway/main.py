@@ -29,14 +29,17 @@ async def create_vendor(vendor: VendorCreate):
     # Logic to save to Postgres via MCP
     return {"status": "created", "vendor_id": "temp-uuid"}
 
+class AnalyzeRequest(BaseModel):
+    vendor_id: str
+
 @app.post("/analyze")
-async def trigger_analysis(vendor_id: str):
-    logger.info(f"Triggering analysis for vendor: {vendor_id}")
+async def trigger_analysis(request: AnalyzeRequest):
+    logger.info(f"Triggering analysis for vendor: {request.vendor_id}")
     async with httpx.AsyncClient() as client:
         try:
             response = await client.post(
                 f"{AGENT_SERVICE_URL}/analyze",
-                json={"vendor_name": "Unknown Vendor", "vendor_id": vendor_id},
+                json={"vendor_name": "Unknown Vendor", "vendor_id": request.vendor_id},
                 timeout=120.0
             )
             return response.json()

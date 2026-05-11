@@ -6,6 +6,7 @@ COPY services/agent-service/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY services/agent-service/ /app/services/agent-service/
+COPY scripts/ /app/scripts/
 
 ENV PYTHONPATH=/app
 
